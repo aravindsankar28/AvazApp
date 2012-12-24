@@ -1,0 +1,231 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="{{MEDIA_URL}}/CSS/bootstrap.min.css">
+        <link rel="stylesheet" href="{{MEDIA_URL}}/CSS/bootstrap-responsive.min.css">
+        <link rel="stylesheet" href="{{MEDIA_URL}}/CSS/styles.css">
+        <script  src = "{{MEDIA_URL}}/JS/bootstrap.js">
+        </script>
+        <script src = "{{MEDIA_URL}}/JS/bootstrap.min.js">
+        </script>
+        <script src = "{{MEDIA_URL}}/JS/jquery.js"></script>
+        <script src = "{{MEDIA_URL}}/JS/create_tree.js"></script>
+        <script src = "{{MEDIA_URL}}/JS/editItem.js"></script>
+        <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-carousel.js">
+        </script>
+        <script type="text/javascript">    
+            $(document).ready(function(){
+            	      	 $(".lid").on("click","a",function(event){                               	 
+                    $('.redd').each(function() {     
+                            	  	
+                        $(this).removeClass("redd");
+                    });  
+                  
+                     $('.current').each(function() {                	  	
+                        $(this).removeClass("current");
+                    });
+                  //  alert($(this).parent().attr('data-name')); 
+                   // alert($(this).parent().attr('data-val')); 
+                 //   alert(getValue());          	 	 	
+                    $(this).addClass("redd");                    
+                    $(this).addClass('current');
+                   
+                });  
+                 
+                
+                $("#test").click(function(){
+                    var id = getValue();
+                    var x= $("#field").attr('value');
+                    var string = $("form.upload").serialize();
+                    $('form.upload').ajaxForm(function() {
+                    	
+                    }); 
+                    /* $.ajax(
+                    {
+                        url:'/test/',
+                        type:'post',
+                        data: {datas:string,zpk:id},                              		
+                        success: function(response) {                        
+                            alert(response);
+                        }
+                    });*/
+                });
+            });
+     		
+            function func(vari,var1)
+            {
+                x = var1;   
+                // alert(var1);            
+                document.getElementById('contentTop').innerHTML="<img id = 'currImg' src ='{{MEDIA_URL}}/png/"+vari+"' >";
+                document.getElementById('forms').style.display="block";
+                
+            }
+            function getValue()
+            { 
+                //    alert(x);
+        		
+                // document.getElementById("foobar").value =  x;
+                return x;
+            }
+        </script>
+        <script type="text/javascript" >
+            function removeDuplicateElement(arrayName)
+            {
+                var newArray=new Array();
+                label:for(var i=0; i<arrayName.length;i++ )
+                {  
+                    for(var j=0; j<newArray.length;j++ )
+                    {
+                        if(newArray[j]==arrayName[i]) 
+                            continue label;
+                    }
+                    newArray[newArray.length] = arrayName[i];
+                }
+                return newArray;
+            }
+        </script>
+        <script>
+            $(document).ready(function(){
+                $("#search").click(function(){  
+                    $.ajax({
+                        url: "/getSearch/",
+                        type: "get",
+                        data:{search_value: $('#search_field').val() }, 			
+                        success: function(response) {
+                            var array = jQuery.parseJSON(response) ;
+                            var arr = [];
+                            for(var i = 0;i< array.length ;i++)      
+                            {
+                                arr[i] = array[i].fields.zpicture;                            
+                            }
+                            arr = removeDuplicateElement(arr);
+                            for(var i = 0;i< arr.length ;i++)                            
+                            {
+                                $(".carousel-inner").append("<div class = 'item'><a style = 'left:200px;'><img class = 'selectimg' src ='{{MEDIA_URL}}png/"+arr[i]+"'><a/><div class ='carousel-caption'><p>"+arr[i]+"</p></div></div>");
+                                console.log(arr[i])
+                                $(".selectimg").click(function(event)
+                                {                                  
+                                    var x = this.src;
+                                    var y = getValue();                                 
+                                    $.ajax({
+                                        url: "/searchupdate/",
+                                        type: "get",
+                                        data: {x:x,foobar:y},                                                
+                                        success: function(response) {
+                                            $('body').off('.alert.data-api')
+                                                      
+                                            $('#contentTop').html("<img id = 'currImg' src ='{{MEDIA_URL}}/png/"+response+"' >");
+                                            //$("#search").click();
+                                            console.log(response)
+                                        }                                                                    
+                
+                                    });
+                                });
+                            }
+                        }
+                    });
+                });
+            });
+        </script>
+        <!--<script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-dropdown.js"></script> -->        
+        <script type="text/javascript" >
+            $(document).ready(function(){            
+                $(".carousel").carousel({
+                    // interval: 2000
+                });
+
+            });
+        </script>      
+        <script type="text/javascript" >
+            $(document).ready(function(){   
+                $("#create").click(function(){
+	 					 
+                    var parentID = getValue();
+              
+                    $.ajax({
+	  
+                        url:'/create/',
+                        type:'post',
+                        data:{select:$("select").attr('value'),parentid:parentID},
+	  
+                        success: function(response) {
+                        	 $('.current').trigger('click'); 
+                        	 alert(response);      
+                        	 console.log(response)                  
+                            var y =jQuery.parseJSON(response) ;
+                            
+                            alert("Created !!");
+                            alert(y[0].pk);
+                             var a = y[0].fields.ztag_name;
+                          //  alert(y[0].fields.zcategory_or_template);
+                            if(y[0].fields.zcategory_or_template  ==  "T" && y[1].fields.zcategory_or_template  ==  "T" )
+                            {
+                            $('<li class ="imgs" data-name = "'+y[0].fields.ztag_name+'" data-imgsrc="'+y[0].fields.zpicture+'" data-val = "'+y[0].pk+'"><a style="cursor:pointer">'+a+'</a></li>').insertAfter(".current");
+									}
+									else if(y[0].fields.zcategory_or_template  ==  "T" && y[1].fields.zcategory_or_template  ==  "D" )
+									{
+									 $("#"+y[1].pk).prepend('<li class ="imgs" data-name = "'+y[0].fields.ztag_name+'" data-imgsrc="'+y[0].fields.zpicture+'" data-val = "'+y[0].pk+'"><a style="cursor:pointer">'+a+'</a></li></ul>');
+																	
+									}                          	 
+                          	 else if(y[0].fields.zcategory_or_template  ==  "D" && y[1].fields.zcategory_or_template  ==  "T" )
+                          	 {
+									 alert("Category");                                                    	                           	                         	 
+                          	 $('<li class ="imgs" data-name = "'+y[0].fields.ztag_name+'" data-imgsrc="'+y[0].fields.zpicture+'" data-val = "'+y[0].pk+'"><a style="cursor:pointer"><b>'+a+'</b></a></li><a href = "" class="parent" data-val = "'+y[0].pk+'" ><img src="/media/Images/folder.gif"><img src="/media/Images/plus.gif" id = "folder"></a><ul class="parent" id=  "'+y[0].pk+'"></ul>').insertAfter('.current');
+									                      	                          	 
+                          	 }
+                          	 else
+                          	 {
+                          	  alert("Category"); 
+                          	 $("#"+y[1].pk).prepend.('<li class ="imgs" data-name = "'+y[0].fields.ztag_name+'" data-imgsrc="'+y[0].fields.zpicture+'" data-val = "'+y[0].pk+'"><a style="cursor:pointer"><b>'+a+'</b></a></li><a href = "" class="parent" data-val = "'+y[0].pk+'" ><img src="/media/Images/folder.gif"><img src="/media/Images/plus.gif" id = "folder"></a><ul class="parent" id=  "'+y[0].pk+'"></ul>');
+                          	 }
+                        }
+			
+                    });
+	 
+                });
+	  
+            });
+        </script>
+    </head>
+    <body>
+        <div id="leftContent">
+            {% block left_content %}
+            {% endblock %}
+        </div>
+        <div id="rightContent">
+            {% block right_content %}
+            {% endblock %}
+        </div>
+        <div id="contentTop">
+            {% block content %}
+            {% endblock %}            
+        </div>
+        <div id = "contentBottom">
+            <div id = "forms">
+                <b>Replace Image :</b>
+                Search <input type = "text" id = "search_field">
+                <button id = "search" class = "btn">Search</button>
+                <form action="images/" enctype="multipart/form-data" method="POST" class="upload">		                                      
+                    <table>
+                        {{ form.as_table }}
+                        <td><input type = "button" onclick="" value="Upload" id = "test"class = "btn btn-primary"/></td>
+                    </table>
+                </form>
+
+                <form>
+                    <input type="text" name="textfield" id = "field">
+
+                    <button id="test" type="button">Test</button>
+                </form>
+            </div>
+            <div id = "viewImages">
+                <div id="myCarousel" class="carousel slide">
+                    <div class="carousel-inner">               
+                    </div>
+                    <a class="left carousel-control" href="#myCarousel" data-slide="prev">‹</a>
+                    <a class="right carousel-control" href="#myCarousel" data-slide="next">›</a>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

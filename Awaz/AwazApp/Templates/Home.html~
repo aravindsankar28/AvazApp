@@ -1,0 +1,35 @@
+{% extends "Index.html" %}
+{% block left_content %}
+
+<ul id="myul">
+    {% for e in objectlist %}
+    <li class="lid"> <a style="cursor:pointer"  onclick = "func('{{e.zpicture}}','{{e.z_pk}}')"><b>{{e.ztag_name}}</b>
+            <a class="parent" data-val="{{e.z_pk}}" href="">
+                <img src="{{ MEDIA_URL}}Images/folder.gif" ><img src="{{ MEDIA_URL}}Images/plus.gif" ></a></a>
+        <ul id="{{e.z_pk}}" >
+        </ul>
+    </li>
+    {% endfor%}
+</ul>
+{% endblock %}
+{% block right_content %}
+<form>
+    <b><u>Edit Details :</u></b><br>
+    Name :<input type="text" id = "ztag_name" name="ztag_name" placeholder = "New tag name"><br>
+    <button type="button" id="editsave">Save</button>
+</form>
+<form>
+    <b><u>Create new item(template or category) :</u></b>
+    <select name="dropdown">
+        <option value="template">Template</option>
+        <option value="category">Category</option>
+    </select>
+    <button type="button" id="create">Create</button>
+</form><!--
+<audio controls>
+  <source src="{{MEDIA_URL}}audio/abc.mp3" type="audio/mpeg">
+ 
+  Your browser does not support this audio format.
+</audio>-->
+
+{% endblock %}
