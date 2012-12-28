@@ -36,6 +36,16 @@ class ImageUpload(models.Model):
 	image_id = models.AutoField(primary_key=True)
 	upload_file    = models.FileField(upload_to = get_image_path, blank = True, null = True)	
 
+class Zimagedata(models.Model):
+    z_pk = models.IntegerField(null=True, primary_key=True, db_column=u'Z_PK', blank=True) # Field name made lowercase.
+    z_ent = models.IntegerField(null=True, db_column=u'Z_ENT', blank=True) # Field name made lowercase.
+    z_opt = models.IntegerField(null=True, db_column=u'Z_OPT', blank=True) # Field name made lowercase.
+    zindex = models.DecimalField(decimal_places=None, null=True, max_digits=None, db_column=u'ZINDEX', blank=True) # Field name made lowercase.
+    zdirectory_path = models.TextField(db_column=u'ZDIRECTORY_PATH', blank=True) # Field name made lowercase. This field type is a guess.
+    zfile_name = models.TextField(db_column=u'ZFILE_NAME', blank=True) # Field name made lowercase. This field type is a guess.
+    zkey_words = models.TextField(db_column=u'ZKEY_WORDS', blank=True) # Field name made lowercase. This field type is a guess.
+    class Meta:
+        db_table = u'ZIMAGEDATA'
 
 
 

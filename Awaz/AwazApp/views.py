@@ -9,18 +9,22 @@ from django.core import serializers
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 import sha, random
+from ajaxuploader.views import AjaxFileUploader
+from django.middleware.csrf import get_token
+import string
 def home(request):
 	form = ImageUploadForm() 
 	e1 = Zpicmodedict.objects.get(z_pk = 1)
 	objectlist = Zpicmodedict.objects.filter(zparent_id = 0).order_by('zserial')
+	'''
 	if request.method == 'POST':
 		form = ImageUploadForm(request.POST, request.FILES)
-		if form.is_valid():
-			
+		if form.is_valid():			
 			obj.zpicture = "custom_images/"+request.FILES['upload_file'].name
 			obj.save()
 			form.save()
-			return HttpResponseRedirect('/home/')
+			return HttpResponseRedirect('/home/')'''
+	csrf_token = get_token(request)
 	return render_to_response('Home.html', locals(), context_instance = RequestContext(request))
 
 def getChildren(request,foobar):
@@ -65,26 +69,32 @@ def images(request):
 	}   
 	return render_to_response('imageScroller.html', context, context_instance = RequestContext(request)) 
 	
-def removeImg(request,foobar):
-	obj = Zpicmodedict.objects.get(z_pk = str(foobar))
-	obj.zpicture = None;
-	obj.save()
+def clearImage(request):
+	if request.is_ajax():
+		foobar = request.GET['zpk']
+		obj = Zpicmodedict.objects.get(z_pk = str(foobar))
+		obj.zpicture = None;
+		obj.save()
+		return HttpResponse("Success")
 	return HttpResponseRedirect('/images/'+foobar)
 
 def getSearch(request):
 	if request.is_ajax():
 		search_val = request.GET['search_value']
 		try:
+			search = Zimagedata.objects.filter(zkey_words__icontains = search_val)
 			search_query = Zpicmodedict.objects.filter(Q(ztag_name__icontains = search_val) | Q(zpicture__icontains = search_val)).distinct()
 		except:
+			search = None
 			search_query = None
-		query1 = search_query
+		query1 = search
 		json = serializers.serialize("json",query1)
 		return HttpResponse(json)
-
+		
+@csrf_exempt
 def upload_file(request):
-	if request.is_ajax():
-		return HttpResponse("Hi")   
+	return render_to_response('import.html', context_instance = RequestContext(request))
+	  
 
 def searchupdate(request):
 	if request.is_ajax():
@@ -97,12 +107,14 @@ def searchupdate(request):
 		
 @csrf_exempt        
 def test(request):
-    if request.is_ajax():
-        form = ImageUploadForm(data=request.POST, files=request.FILES)
-        if form.is_valid():
-            form.save()
-            return HttpResponse("Saved !")
-        return HttpResponse("Not Saved !!!!")
+    if request.is_ajax():  	  
+    	  #form = ImageUploadForm(data=request.POST, files=request.FILES)
+    	  fd =request.FILES['fd']
+    	  return HttpResponse(" ")
+    	  if form.is_valid():
+    	  		form.save()
+    	  		return HttpResponse("Saved !")
+    	  return HttpResponse("Not Saved !!!!")
     return HttpResponse("Hi")            
                         
 @csrf_exempt
@@ -167,3 +179,46 @@ def create(request):
 		
 def audio(request):
 	return render_to_response('Audio.html', locals(), context_instance = RequestContext(request))
+
+def word(request):
+	if request.is_ajax():
+		search = request.GET['search']
+		try:
+			search_query = Zpicmodedict.objects.filter(ztag_name__icontains = search)
+		except:
+			search_query = None
+		json = serializers.serialize("json",search_query)
+		return HttpResponse(json)
+
+def getParent(request):
+	if request.is_ajax():
+		x = request.GET['x']
+		obj = Zpicmodedict.objects.filter(zidentifier = x)
+		json = serializers.serialize("json",obj)
+		return HttpResponse(json)
+		
+def start(request):
+    csrf_token = get_token(request)
+    return render_to_response('import.html',
+        {'csrf_token': csrf_token}, context_instance = RequestContext(request))
+
+import_uploader = AjaxFileUploader(UPLOAD_DIR = 'png/custom_images')
+
+def upload(request):
+	if request.is_ajax():
+		zpk = request.GET['zpk']
+		name = request.GET['file_name']
+		obj = Zpicmodedict.objects.get(z_pk = zpk)
+		obj.zpicture = 'custom_images/'+name
+		obj.save()
+		img = Zimagedata()
+		x = ""
+		x = name[:-len(".png")]
+     	img.zfile_name = x
+     	img.zdirectory_path = 'custom_images'
+     	for char in string.punctuation:
+     		x = x.replace(char, ' ')
+     	print x
+     	img.zkey_words = x
+     	img.save()
+     	return HttpResponse(obj.zpicture)

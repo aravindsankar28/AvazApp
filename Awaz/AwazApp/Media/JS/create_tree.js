@@ -5,6 +5,7 @@
                     var x= $(this).attr('data-val');
                    
                     $.ajax({
+                    		async: false, 
                         url: "/getChildren/"+x+"/",
                         type: "get", 			
                         success: function(response) {
@@ -20,6 +21,9 @@
                                 {
                                       
                                     $("#"+x).children().show();
+                                     //alert( $("#"+x).children('a').attr('title'));
+                                 //   alert($(this).attr("title"));
+                                     $(".redd").children('.folder').attr("src","/media/Images/minus.gif");
                                     if($("#"+x).children(':visible').length >0)
                                         check = 1;
                                 }
@@ -27,7 +31,7 @@
                                 {
                                 	
                                     var a = y[i].fields.ztag_name;
-                                    console.log(y[i].fields.ztag_name);   
+                                  //  console.log(y[i].fields.ztag_name);   
                                     if(check == 0)
                                     {
                                     	  if(y[i].fields.zcategory_or_template == "D")
@@ -38,17 +42,21 @@
                                     if(y[i].fields.zcategory_or_template == "D" && check == 0)
                                     {
                                        
-                                        $("#"+x).append('<a href = "" class="parent" data-val = "'+y[i].pk+'" ><img src="/media/Images/folder.gif"><img src="/media/Images/plus.gif" id = "folder"></a>');	
+                                        $("#"+x).append('<a href = "" class="parent" data-val = "'+y[i].pk+'" ><img src="/media/Images/folder.gif"><img src="/media/Images/plus.gif" class = "folder"></a>');	
                                         $("#"+x).append('<ul class="parent" id=  "'+y[i].pk+'"></ul>');	
                                         //$("#folder").attr("src","{{MEDIA_URL}}/Images/minus.gif");
                                     }												
                                 }
-                                // $("#folder").attr("src") = "{{ MEDIA_URL}}Images/plus.gif";
+                                 
+                                 
                             }
                             else
                             {
                                 
                                 $("#"+x).children().hide();
+                                $("#content").html("");
+                                $(".folder").attr("src","/media/Images/plus.gif");
+                               
                                 //$("#"+x).css("display","block");
                             } 
                         }

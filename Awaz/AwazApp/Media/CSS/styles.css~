@@ -1,11 +1,23 @@
    
-            #leftContent{
+            #leftContentTop{
                 top: 50px;
-                width: 200px;
+                width: 220px;
                 left: 10px;
                 position: absolute;
+                height: 500px;
                 background-color: #FFFF66;
+                overflow: auto;
             }
+            #leftContentBottom{
+                top: 600px;
+                width: 220px;
+                left: 10px;
+                position: absolute;
+                height: 50px;
+                background-color: #FFFF66;
+                
+            }
+            
             #rightContent{
                 width: 250px;
                 right: 10px;
@@ -42,5 +54,16 @@
 .selectImg{
 cursor: pointer;
 }
-        
-       
+
+.redd{
+color: red;	
+	
+	}        
+#file-uploader{
+	display:None;
+	}       
+	#currImg{
+		
+		position: absolute;
+		left: 150px;		
+		}

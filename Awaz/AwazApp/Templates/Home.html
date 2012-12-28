@@ -1,9 +1,9 @@
 {% extends "Index.html" %}
-{% block left_content %}
-
+{% block left_content_top %}
+<b>List of Categories/Templates</b>
 <ul id="myul">
     {% for e in objectlist %}
-    <li class="lid"> <a style="cursor:pointer"  onclick = "func('{{e.zpicture}}','{{e.z_pk}}')"><b>{{e.ztag_name}}</b>
+    <li class="lid"> <a data-imgsrc = "{{e.zpicture}}" style="cursor:pointer"  onclick = "func(this.getAttribute('data-imgsrc'),'{{e.z_pk}}')"><b>{{e.ztag_name}}</b>
             <a class="parent" data-val="{{e.z_pk}}" href="">
                 <img src="{{ MEDIA_URL}}Images/folder.gif" ><img src="{{ MEDIA_URL}}Images/plus.gif" ></a></a>
         <ul id="{{e.z_pk}}" >
@@ -11,6 +11,13 @@
     </li>
     {% endfor%}
 </ul>
+{% endblock %}
+{% block left_content_bottom %}
+<b>Word search :</b>
+<input type="text" name="search_word" id="search_word">
+<button type="button" id="prev" class="btn btn-info">Prev</button>
+<button type="button"id="word_button" class="btn btn-info">WordSearch</button>
+<button type="button" id="next" class="btn btn-info">Next</button>
 {% endblock %}
 {% block right_content %}
 <form>
@@ -26,6 +33,5 @@
     </select>
     <button type="button" id="create">Create</button>
 </form>
-
 
 {% endblock %}
