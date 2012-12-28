@@ -5,11 +5,11 @@
                 left: 10px;
                 position: absolute;
                 height: 500px;
-                background-color: #FFFF66;
+                background-color: #00FF66;
                 overflow: auto;
             }
             #leftContentBottom{
-                top: 600px;
+                top: 550px;
                 width: 220px;
                 left: 10px;
                 position: absolute;

@@ -66,7 +66,10 @@
                     $(this).removeClass("current");
                 });                            
                             
-                $(x).addClass('current');                         
+                $(x).addClass('current');
+                var wxyz = $(x).offset().top;
+              //  alert($(x).offset().top);
+                $("#leftContentTop").scrollTop(wxyz);                         
                 $(x).trigger('click');
                 $(z[1]).trigger('click');  
                 $(x).children('a').addClass('redd');
@@ -93,6 +96,9 @@
                             var j = 0;     
                             r = response;                               	
                             change_display(j);
+                                          
+                           
+                            //document.getElementById('leftContentTop').scrollTop = wxyz.offsetTop;
                             $("#next").click(function(){
                                 j = j+1;
                                 change_display(j);
