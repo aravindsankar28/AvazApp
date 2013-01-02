@@ -34,10 +34,20 @@
                                   //  console.log(y[i].fields.ztag_name);   
                                     if(check == 0)
                                     {
-                                    	  if(y[i].fields.zcategory_or_template == "D")
-                                        $("#"+x).append('<li class ="imgs" data-name = "'+y[i].fields.ztag_name+'" data-imgsrc="'+y[i].fields.zpicture+'" data-val = "'+y[i].pk+'"><a style="cursor:pointer"><b>'+a+'</b></a></li>');
+                                    	 if(y[i].fields.zcategory_or_template == "D")
+                                    	 {
+                                    	 	if(y[i].fields.zis_enabled == 1)
+                                        	$("#"+x).append('<li class ="imgs" data-name = "'+y[i].fields.ztag_name+'" data-imgsrc="'+y[i].fields.zpicture+'" data-val = "'+y[i].pk+'"><a style="cursor:pointer"><b>'+a+'</b></a></li>');
+                                        	else
+                                        	$("#"+x).append('<li class ="imgs" data-name = "'+y[i].fields.ztag_name+'" data-imgsrc="'+y[i].fields.zpicture+'" data-val = "'+y[i].pk+'"><a style="cursor:pointer" class = "black"><b>'+a+'</b></a></li>');
+													 }                                        
                                         else
-                                        $("#"+x).append('<li class ="imgs" data-name = "'+y[i].fields.ztag_name+'" data-imgsrc="'+y[i].fields.zpicture+'" data-val = "'+y[i].pk+'"><a style="cursor:pointer">'+a+'</a></li>');
+                                        {
+                                        	if(y[i].fields.zis_enabled == 1)
+                                        	$("#"+x).append('<li class ="imgs" data-name = "'+y[i].fields.ztag_name+'" data-imgsrc="'+y[i].fields.zpicture+'" data-val = "'+y[i].pk+'"><a style="cursor:pointer">'+a+'</a></li>');
+													   else
+													   $("#"+x).append('<li class ="imgs" data-name = "'+y[i].fields.ztag_name+'" data-imgsrc="'+y[i].fields.zpicture+'" data-val = "'+y[i].pk+'"><a style="cursor:pointer" class = "black">'+a+'</a></li>');
+													 }												
 												}                                    
                                     if(y[i].fields.zcategory_or_template == "D" && check == 0)
                                     {
@@ -56,7 +66,7 @@
                                 $("#"+x).children().hide();
                                 $("#content").html("");
                                 $(".folder").attr("src","/media/Images/plus.gif");
-                               
+											$("#contentTop").html("");                               
                                 //$("#"+x).css("display","block");
                             } 
                         }

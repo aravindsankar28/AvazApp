@@ -1,4 +1,5 @@
  var y ;
+ var prev = 0;
             var r;
             var n;
             function getParent(x)
@@ -67,11 +68,16 @@
                 });                            
                             
                 $(x).addClass('current');
-                var wxyz = $(x).offset().top;
-                alert($(x).offset().top);
-                $("#leftContentTop").scrollTop(wxyz);                         
+                                       
                 $(x).trigger('click');
                 $(z[1]).trigger('click');  
+                var yz = $(x).attr('data-name');
+                
+                var wxyz = $(x).position().top;
+               
+                alert(wxyz);                                 
+                $("#leftContentTop").scrollTop(wxyz);
+                prev = wxyz; 
                 $(x).children('a').addClass('redd');
                 if(y[i].fields.zparent_id == 0)
                 {

@@ -519,7 +519,7 @@ qq.FileUploader = function(o){
         // if set, will be used instead of qq-upload-list in template
         listElement: null,
                 
-        template: '<b>Upload an image :</b><div class="qq-uploader">' + 
+        template: '<div class="qq-uploader">' + 
                 '<div class="qq-upload-drop-area"><span>Drop files here to upload</span></div>' +
                 '<div class="qq-upload-button">Upload </div>' +
                 '<ul class="qq-upload-list"></ul>' + 
@@ -808,6 +808,8 @@ qq.UploadButton = function(o){
     qq.css(this._element, {
         position: 'relative',
         overflow: 'hidden',
+        cursor:'pointer',
+        cursor:'hand',
         // Make sure browse button is in the right side
         // in Internet Explorer
         direction: 'ltr'
@@ -849,7 +851,6 @@ qq.UploadButton.prototype = {
             top: 0,
             fontFamily: 'Arial',
             // 4 persons reported this, the max values that worked for them were 243, 236, 236, 118
-            fontSize: '118px',
             margin: 0,
             padding: 0,
             cursor: 'pointer',

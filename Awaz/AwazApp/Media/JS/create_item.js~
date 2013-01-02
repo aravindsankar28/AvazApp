@@ -1,3 +1,9 @@
+$(document).ready(function(){            
+                $(".carousel").carousel({                   
+                });
+
+            });
+            
 $(document).ready(function(){   
                 $("#create").click(function(){
 	 					 

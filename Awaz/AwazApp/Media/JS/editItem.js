@@ -2,55 +2,52 @@
             
                 $("#editsave").click(function(){
                     var id = getValue();
+                    var zname  = $("#ztag_name").attr('value');
+                    var audio_data = $("#audio_data").attr('value');
+                    var zcolor = $("#selectColor").attr('value');
+                    if($("#imageEnable").attr('checked'))
+                    	var enable = $("#imageEnable").attr('value');
+                    else
+                    	var enable =0; 
+                  //  alert(zcolor);
+                   // alert(audio_data);
+                   // alert(enable);
                     $.ajax(
                     {
                         url:'/editsave/',
                         type:'post',
-                        data: {zname:$("#ztag_name").attr('value'),zpk:id},        		
+                        data: {zname:zname,zpk:id,audio_data:audio_data,zcolor:zcolor,enable:enable},        		
                         success: function(response) {
-                            alert("Saved successfully");
-                            
-                            //alert($(".current").attr('data-val')); 
-                         var zname  =   $("#ztag_name").attr('value'); 
+                         alert("Saved successfully");
+                                                      
+                         objs = jQuery.parseJSON(response) ; 
+                         var obj = objs[0];
                          var arr =  $('.current').text();
-                         if(response == "T") 
-                         $('.current').html('<a style = "cursor:pointer">'+zname+'</a>');          
+                         if(obj.fields.zcategory_or_template == "T")
+                         { 
+                         $('.current').html('<a style = "cursor:pointer">'+zname+'</a>');
+                         if(obj.fields.zis_enabled == 0)
+                         {
+                         	$('.current').children('a').addClass('black');
+                         	
+                         }
+                         else
+                         	$('.current').children('a').removeClass('black');
+                         }          
                          else
                          {
                          	$('.current').html('<a style = "cursor:pointer"><b>'+zname+'</b></a>');   
-                           $('.current').children('a').addClass("redd");  
+                           $('.current').children('a').addClass("redd"); 
+                           if(obj.fields.zis_enabled == 0) 
+                           	$('.current').children('a').addClass('black');
+                           else
+                           	$('.current').children('a').removeClass('black');
                          }                               
                            
                         }			
                     });
                 });
-            });            $(document).ready(function(){                  
-            
-                $("#editsave").click(function(){
-                    var id = getValue();
-                    $.ajax(
-                    {
-                        url:'/editsave/',
-                        type:'post',
-                        data: {zname:$("#ztag_name").attr('value'),zpk:id},        		
-                        success: function(response) {
-                            alert("Saved successfully");
-                            
-                            //alert($(".current").attr('data-val')); 
-                         var zname  =   $("#ztag_name").attr('value'); 
-                         var arr =  $('.current').text();
-                         if(response == "T") 
-                         $('.current').html('<a style = "cursor:pointer">'+zname+'</a>');          
-                         else
-                         {
-                         	$('.current').html('<a style = "cursor:pointer"><b>'+zname+'</b></a>');   
-                           $('.current').children('a').addClass("redd");  
-                         }                               
-                           
-                        }			
-                    });
-                });
-            });
+            });            
             
              $(document).ready(function(){
                 $(".lid").on("click","a",function(event){                               	 
@@ -83,7 +80,7 @@ $(document).ready(function(){
 			type:'get',
 			success: function(response) {
 				alert(response);
-				 $(".current").attr('data-imgsrc',null);          
+				 $(".current").attr('data-imgsrc',"NONE");          
              $('#contentTop').html("Image not available");
 			}
 			});

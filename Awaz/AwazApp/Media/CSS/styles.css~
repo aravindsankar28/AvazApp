@@ -3,9 +3,9 @@
                 top: 50px;
                 width: 220px;
                 left: 10px;
-                position: absolute;
+                position:absolute;
                 height: 500px;
-                background-color: #00FF66;
+                background-color: #FFFF66;
                 overflow: auto;
             }
             #leftContentBottom{
@@ -22,6 +22,7 @@
                 width: 250px;
                 right: 10px;
                 top: 50px;
+                height:600px;
                 position: absolute;
                 background-color: #0FFF00;
             }
@@ -46,17 +47,25 @@
             }
             #viewimages{
 				position: absolute;
-				top: 150px;
+				top: 180px;
 				height: 200px;
 				width: 600px;
 			
 }
+#img_url_upload{
+	
+	display:None;
+	}
 .selectImg{
 cursor: pointer;
 }
 
 .redd{
 color: red;	
+	
+	} 
+	.black{
+color: black;	
 	
 	}        
 #file-uploader{
@@ -67,3 +76,12 @@ color: red;
 		position: absolute;
 		left: 150px;		
 		}
+
+#exportHtml{
+cursor: pointer;
+
+}
+#downloadHtml{
+cursor: pointer;
+display:None;
+}		

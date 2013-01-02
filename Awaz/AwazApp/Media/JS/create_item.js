@@ -13,7 +13,7 @@ $(document).ready(function(){
 	  
                         url:'/create/',
                         type:'post',
-                        data:{select:$("select").attr('value'),parentid:parentID},
+                        data:{select:$("#dropdown").attr('value'),parentid:parentID},
 	  
                         success: function(response) {
                             $('.current').trigger('click'); 

@@ -11,7 +11,20 @@ from django.views.decorators.csrf import csrf_exempt
 import sha, random
 from ajaxuploader.views import AjaxFileUploader
 from django.middleware.csrf import get_token
-
+import string
+from xlwt import *
+from settings import *
+from xlwt import *
+import sys
+from struct import pack, unpack
+import StringIO
+from django.template.loader import render_to_string
+import ho.pisa as pisa
+import os
+import tarfile
+import subprocess
+from subprocess import Popen,PIPE
+import urllib2
 def home(request):
 	form = ImageUploadForm() 
 	e1 = Zpicmodedict.objects.get(z_pk = 1)
@@ -122,10 +135,19 @@ def editsave(request):
 	if request.is_ajax():
 		zpk = str(request.POST['zpk'])
 		zname = request.POST['zname']
+		zcolor = request.POST['zcolor']
+		enable = request.POST['enable']
+		audio_data = request.POST['audio_data']
 		obj = Zpicmodedict.objects.get(z_pk = zpk)
 		obj.ztag_name = zname
+		obj.zcolor = zcolor
+		obj.zis_enabled = enable
+		obj.zaudio_data = audio_data
 		obj.save()
-		return HttpResponse(obj.zcategory_or_template)
+		l = []
+		l.append(obj)
+		json = serializers.serialize("json",l)
+		return HttpResponse(json)
 		
 @csrf_exempt		
 def create(request):
@@ -146,18 +168,6 @@ def create(request):
 		#return HttpResponse(y)
 		obj.z_pk = y+1
 		obj.zserial = x+1
-		'''
-		objects = Zpicmodedict.objects.filter(zserial__gte  = x)
-		
-		for obj in objects:			
-			obj.zserial = obj.zserial + 1
-
-			print obj.zserial
-		for obj in objects:	
-			obj.save()
-		return HttpResponse("")	
-		obj.zserial = x+1
-		obj.z_pk = y+1'''
 		if parent.zcategory_or_template == "D":
 			obj.zparent_id = parent.zidentifier
 		else:
@@ -202,8 +212,8 @@ def start(request):
     return render_to_response('import.html',
         {'csrf_token': csrf_token}, context_instance = RequestContext(request))
 
-import_uploader = AjaxFileUploader(UPLOAD_DIR = 'png/custom_images')
-
+import_uploader = AjaxFileUploader(UPLOAD_DIR = 'custom_images')
+import_db = AjaxFileUploader(UPLOAD_DIR = 'Files')
 def upload(request):
 	if request.is_ajax():
 		zpk = request.GET['zpk']
@@ -222,3 +232,150 @@ def upload(request):
      	img.zkey_words = x
      	img.save()
      	return HttpResponse(obj.zpicture)
+
+
+     	
+def xls(request):
+	
+    requirements=Zpicmodedict.objects.all()
+    a=1
+    foobar = "1"
+    if foobar == "1":
+        #print "hello"
+        w=Workbook()
+        ws = w.add_sheet('Items')
+        cols=19
+        #ws.write(0,0,'Event Name')
+        for colx,heading in enumerate(('Z_PK','Z_ENT','Z_OPT','ZIS_ENABLED','ZIS_SENTENCE_BOX_ENABLED','ZSERIAL','ZVERSION','ZAUDIO_DATA','ZCATEGORY_OR_TEMPLATE','ZCOLOR','ZIDENTIFIER','ZPARENT_ID','ZPICTURE','ZTAG_NAME')*1):
+            ws.write(0,colx,heading)
+		
+        rx=0
+        for r in requirements:
+            rx+=1
+            ws.write(rx,0,r.z_pk)
+            ws.write(rx,1,r.z_ent)
+            ws.write(rx,2,r.z_opt)
+            ws.write(rx,3,r.zis_enabled)
+            ws.write(rx,4,r.zis_sentence_box_enabled)         
+            ws.write(rx,5,r.zserial)
+            ws.write(rx,6,r.zversion)
+            ws.write(rx,7,r.zaudio_data)
+            ws.write(rx,8,r.zcategory_or_template)
+            ws.write(rx,9,r.zcolor)
+            ws.write(rx,10,r.zidentifier)
+            ws.write(rx,11,r.zparent_id)
+            ws.write(rx,12,r.zpicture)
+            ws.write(rx,13,r.ztag_name)	        
+        fname = 'Avaz.xls'
+        response = HttpResponse(mimetype="application/vnd.ms-excel")
+        response['Content-Disposition'] = 'attachment; filename=%s' % fname
+        w.save(response)
+        return response
+
+def printChildren(obj,htmls):
+	children = Zpicmodedict.objects.filter(zparent_id = obj.zidentifier)
+	htmls.write("<ol>")
+	for c in children:
+		x = str(c.zpicture)
+		word = x[:3]
+		if word == "ci_":
+			y = os.path.join(os.path.dirname(__file__), 'Media/custom_images/')
+		else: 
+			y = os.path.join(os.path.dirname(__file__), 'Media/png/')
+		z = y+x
+		if os.path.exists(z):
+			f = open(z,'r')
+			try:
+				f1 = f.read()
+				a = os.path.join(os.path.dirname(__file__), 'Media/Download/Images/')
+				x = x.replace('/','_')
+				print x
+				b = a+x 
+				w = open(b,"w")
+				try:
+					w.write(f1)
+				finally:
+					w.close()
+			finally:
+				f.close()
+				
+		htmls.write("<li>"+c.ztag_name+"<img style = 'width:60px;' src = Images/"+x+"></li>")
+		printChildren(c,htmls)
+	htmls.write("</ol>")
+        
+def export(request):
+	if request.is_ajax():
+		name = os.path.join(os.path.dirname(__file__), 'Media/Download/view.html')
+		htmls = open(name,"w")
+		objs = Zpicmodedict.objects.filter(zparent_id = 0)
+		htmls.write("<html>")
+		htmls.write("<ol>")
+		for obj in objs :
+			x = str(obj.zpicture)
+			word = x[:3]
+			if word == "ci_":
+				y = os.path.join(os.path.dirname(__file__), 'Media/custom_images/')
+			else: 
+				y = os.path.join(os.path.dirname(__file__), 'Media/png/')
+			#y = os.path.join(os.path.dirname(__file__), 'Media/png/')
+			z = y+x
+		
+			f = open(z,'r')
+			try:
+				f1 = f.read()
+				a = os.path.join(os.path.dirname(__file__), 'Media/Download/Images/')
+				x = x.replace('/','_')
+				print x
+				b = a+x 
+				w = open(b,"w")
+				try:
+					w.write(f1)
+				finally:
+					w.close()
+			finally:
+				f.close()
+			htmls.write("<li>"+obj.ztag_name+"<img style = 'width:60px;' src = Images/"+x+"></li>")
+			printChildren(obj,htmls)		
+			htmls.write("</ol>")
+		htmls.write("</html>")		
+		response = HttpResponse(htmls,mimetype="application/html")
+		response['Content-Disposition'] = 'attachment; filename=idiot'
+		return HttpResponse("Exported succesfully")
+	
+def download(request):
+	dir1 = os.path.join(os.path.dirname(__file__),'Media','Download')
+	response = HttpResponse(mimetype='application/x-gzip')
+	response['Content-Disposition'] = 'attachment; filename=Html.tar.gz'
+	tarred = tarfile.open(fileobj=response, mode='w:gz')
+	tarred.add(dir1, arcname="TarName")
+	tarred.close()
+	return response    
+	
+def img(request):
+	if request.is_ajax():
+		img_url = request.GET['url']
+		zpk = request.GET['zpk']
+		obj =  Zpicmodedict.objects.get(z_pk = zpk)
+		try:
+			img = urllib2.urlopen(img_url)
+		except:
+			return HttpResponse("Invalid url !")
+		a = os.path.join(os.path.dirname(__file__), 'Media/custom_images/')
+		name = os.path.basename(img_url)
+		fname  = "ci_"+name
+		path  =  a+fname
+		f = open(path,"w")
+		f.write(img.read())
+		f.close()
+		obj.zpicture  = fname
+		obj.save()
+		return HttpResponse("Image uploaded successfully")
+	img_url = "http://i59.photobucket.com/albums/g300/wizzer520/hello.png"
+	img = urllib2.urlopen(img_url)
+	name = os.path.basename(img_url)
+	a = os.path.join(os.path.dirname(__file__), 'Media/custom_images/')
+	path  =  a+fname
+	f = open(path,"w")
+	f.write(img.read())
+	f.close()
+	return HttpResponse("Done")
